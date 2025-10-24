@@ -28,7 +28,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        208,
+        224,
         0
       ],
       "id": "94c7f9df-e832-4c5b-9bb7-94efa8769146",
@@ -38,15 +38,14 @@
       "parameters": {
         "fromEmail": "bhuttozubair6@gmail.com",
         "toEmail": "bhuttozubair6@gmail.com",
-        "subject": "Today's Weather Digest",
-        "emailFormat": "text",
-        "text": "={{ $json[\"message\"] }}",
+        "subject": "Today's Weather Digest\n",
+        "html": "={{ $json.html }}",
         "options": {}
       },
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        832,
+        672,
         0
       ],
       "id": "608a06c5-5f32-4264-a8df-d1689405288e",
@@ -61,12 +60,12 @@
     },
     {
       "parameters": {
-        "jsCode": "const data = $json[\"current_weather\"];\n\nreturn [{\n  message: `🌤️ Today's Weather Report 🌤️\nLocation: Karachi\nTemperature: ${data.temperature}°C\nWind Speed: ${data.windspeed} km/h\nDirection: ${data.winddirection}°\nTime: ${data.time}`\n}];\n"
+        "jsCode": "const data = $json[\"current_weather\"];\n\n// Map weather codes → emoji + label\nfunction getWeatherEmoji(code) {\n  if (code === 0) return \"☀️ Clear sky\";\n  if ([1, 2, 3].includes(code)) return \"🌤️ Partly cloudy\";\n  if ([45, 48].includes(code)) return \"🌫️ Foggy\";\n  if ([51, 53, 55].includes(code)) return \"🌦️ Drizzle\";\n  if ([61, 63, 65].includes(code)) return \"🌧️ Rainy\";\n  if ([71, 73, 75].includes(code)) return \"❄️ Snowy\";\n  if ([95, 96, 99].includes(code)) return \"⛈️ Thunderstorm\";\n  return \"🌈 Weather info unavailable\";\n}\n\n// Map weather codes → background color\nfunction getBackgroundColor(code) {\n  if (code === 0) return \"#fff7b2\"; // sunny yellow\n  if ([1, 2, 3].includes(code)) return \"#d9e2ec\"; // cloudy light gray-blue\n  if ([45, 48].includes(code)) return \"#cfd8dc\"; // fog gray\n  if ([51, 53, 55].includes(code)) return \"#b3e5fc\"; // drizzle light blue\n  if ([61, 63, 65].includes(code)) return \"#90caf9\"; // rain medium blue\n  if ([71, 73, 75].includes(code)) return \"#e1f5fe\"; // snow pale blue\n  if ([95, 96, 99].includes(code)) return \"#b39ddb\"; // thunderstorm purple\n  return \"#e0f7fa\"; // default soft teal\n}\n\nconst condition = getWeatherEmoji(data.weathercode);\nconst bgColor = getBackgroundColor(data.weathercode);\n\nreturn [{\n  html: `\n  <div style=\"font-family: Arial, sans-serif; background: ${bgColor}; border-radius: 12px; padding: 16px; max-width: 360px;\">\n    <h2 style=\"text-align:center;\">${condition}</h2>\n    <p style=\"margin: 4px 0;\"><b>📍 Location:</b> Karachi</p>\n    <p style=\"margin: 4px 0;\"><b>🌡️ Temperature:</b> ${data.temperature}°C</p>\n    <p style=\"margin: 4px 0;\"><b>💨 Wind Speed:</b> ${data.windspeed} km/h</p>\n    <p style=\"margin: 4px 0;\"><b>🧭 Direction:</b> ${data.winddirection}°</p>\n    <p style=\"margin: 4px 0;\"><b>🕒 Time:</b> ${data.time}</p>\n  </div>\n  `\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        416,
+        448,
         0
       ],
       "id": "024fea6c-5971-467f-bf2b-016c9601a7d9",
@@ -113,7 +112,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "7e1b7c71-a5b9-4d1d-84e1-71ffc6918f11",
+  "versionId": "8220fe86-3195-4d4a-b282-dfac7baef59b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a99efae47a22f1d194a143265b1eba8cdcd83ce8e0816db371b3e2bb7bd6b018"
