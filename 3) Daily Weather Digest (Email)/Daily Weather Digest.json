@@ -1,0 +1,123 @@
+{
+  "name": "Daily Weather Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "59494753-8191-44f7-b1ba-2f20f63ae1c0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=24.860735&longitude=67.001137&current_weather=true",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "94c7f9df-e832-4c5b-9bb7-94efa8769146",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fromEmail": "bhuttozubair6@gmail.com",
+        "toEmail": "bhuttozubair6@gmail.com",
+        "subject": "Today's Weather Digest",
+        "emailFormat": "text",
+        "text": "={{ $json[\"message\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "608a06c5-5f32-4264-a8df-d1689405288e",
+      "name": "Send email",
+      "webhookId": "12dd4023-ee9d-4583-b633-1c2cdf1d1e22",
+      "credentials": {
+        "smtp": {
+          "id": "L83eOp7I7Ct32R5E",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json[\"current_weather\"];\n\nreturn [{\n  message: `🌤️ Today's Weather Report 🌤️\nLocation: Karachi\nTemperature: ${data.temperature}°C\nWind Speed: ${data.windspeed} km/h\nDirection: ${data.winddirection}°\nTime: ${data.time}`\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "024fea6c-5971-467f-bf2b-016c9601a7d9",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7e1b7c71-a5b9-4d1d-84e1-71ffc6918f11",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a99efae47a22f1d194a143265b1eba8cdcd83ce8e0816db371b3e2bb7bd6b018"
+  },
+  "id": "gKmbBW5hhySO0CwJ",
+  "tags": []
+}
