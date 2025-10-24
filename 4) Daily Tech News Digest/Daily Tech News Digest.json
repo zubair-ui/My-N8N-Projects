@@ -1,0 +1,141 @@
+{
+  "name": "Daily Tech News Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "921db50c-ed1a-47fa-b563-6eca882634fa",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://newsdata.io/api/1/news?apikey=YOURAPIKEY&category=technology&language=en",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f6a6b8b4-ee59-4fcf-b725-67d3b916eafe",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const articles = $json.results.slice(0, 3); // top 3 articles\n\nlet html = `\n<div style=\"font-family: Arial, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333;\">\n  <h2 style=\"text-align: center; color: #1a1a1a;\">📰 Daily Tech News Digest</h2>\n  <p style=\"text-align: center; color: #777;\">${new Date().toDateString()}</p>\n  <div style=\"margin-top: 20px;\">\n`;\n\narticles.forEach((article, index) => {\n  html += `\n    <div style=\"margin-bottom: 20px; background: #ffffff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);\">\n      <h3 style=\"color: #0078d7; margin-bottom: 8px;\">${index + 1}. ${article.title}</h3>\n      <p style=\"color: #555; margin-bottom: 10px;\">${article.description || \"No description available.\"}</p>\n      <a href=\"${article.link}\" style=\"color: #0078d7; text-decoration: none; font-weight: bold;\">🔗 Read more</a>\n      <p style=\"font-size: 12px; color: #999; margin-top: 8px;\">Source: ${article.source_id || \"Unknown\"}</p>\n    </div>\n  `;\n});\n\nhtml += `\n  </div>\n  <p style=\"text-align:center; color:#aaa; font-size:12px; margin-top:30px;\">Powered by NewsData.io</p>\n</div>\n`;\n\nreturn [{ html }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "587e92b8-551c-41f4-abcb-13c268909189",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "fromEmail": "bhuttozubair6@gmail.com",
+        "toEmail": "bhuttozubair6@gmail.com",
+        "subject": "📰 Daily Tech News Digest",
+        "html": "={{$json[\"html\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "dae5fbad-559f-4007-898b-2400cb58be74",
+      "name": "Send email",
+      "webhookId": "faaded19-5da5-4a1d-85de-f7a251283b75",
+      "credentials": {
+        "smtp": {
+          "id": "L83eOp7I7Ct32R5E",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# ADD YOUR OWN API KEY\nget it from\nhttps://newsdata.io/",
+        "height": 336,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "5feb17c2-b953-4fb8-a1c6-fdb19305fa3a",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Karachi",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "a07181bc-f60c-40c4-906a-39b59c516c28",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a99efae47a22f1d194a143265b1eba8cdcd83ce8e0816db371b3e2bb7bd6b018"
+  },
+  "id": "TXIzQ6Pg5CfUK16z",
+  "tags": []
+}
